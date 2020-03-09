@@ -1,5 +1,6 @@
 import React, {Component} from 'react';
 import axios from 'axios'
+import SearchForm from './components/SearchForm/SearchForm'
 import './App.css';
 
 class App extends Component {
@@ -10,6 +11,7 @@ class App extends Component {
     this.state ={
       weatherData: [],
       weatherData2: [],
+      city: ''
     }
   }
 
@@ -21,7 +23,7 @@ class App extends Component {
     axios
     .get('http://api.weatherstack.com/current?access_key=216b83b59e86240052cbff9a8c4688dd&query=Kaufman%TX&units=f')
     .then(res => {
-      // console.log(res.data)
+      console.log(res.data)
       this.setState({
         weatherData: [res.data.current],
         weatherData2: [res.data.location]
@@ -31,10 +33,19 @@ class App extends Component {
     })
   }
 
+  handleChange = (e) => {
+  this.setState({[e.target.name]: e.target.value})
+  }
+
+  handleSubmit = (e) => {
+    e.preventDefault()
+    alert(`you submitted ${this.state.city}`)
+  }
+
 
   render(){
   let displayData = this.state.weatherData.map((el, id) => {
-      console.log(el.temperature)
+      // console.log(el.temperature)
       if(!this.state.weatherData){
         return (
           <div>
@@ -43,7 +54,7 @@ class App extends Component {
         )
       } else {
         return (
-          <div key={id}>
+          <div key={id} className={el.is_day === 'yes' ? 'day' : 'night'}>
             <ul>
               <li>{el.temperature} F</li>
               <li>{el.feelslike}</li>
@@ -65,10 +76,13 @@ class App extends Component {
     })
 
     return(
-      <div>
+      <div className='container'>
+        <SearchForm
+          handleChange={this.handleChange}
+          handleSubmit={this.handleSubmit}
+        />
         {displayData2}
         {displayData}
-
       </div>
     )
   }
