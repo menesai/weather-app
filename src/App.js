@@ -11,17 +11,26 @@ class App extends Component {
     this.state ={
       weatherData: [],
       weatherData2: [],
-      city: ''
+      city: '',
+      st: '',
+      data: ['dsd'],
+
     }
   }
 
   componentDidMount(){
-    this.fetchingWeater()
+    const {city, st} = this.state
+    if(city === '' ||  st === ''){
+      console.log('data needs to bee filled')
+    } else {
+      this.fetchingWeater()
+    }
   }
 
   fetchingWeater = () => {
-    axios
-    .get('http://api.weatherstack.com/current?access_key=216b83b59e86240052cbff9a8c4688dd&query=Kaufman%TX&units=f')
+    const {city, st} = this.state
+     axios
+    .get(`http://api.weatherstack.com/current?access_key=216b83b59e86240052cbff9a8c4688dd&query=${city}%${st}&units=f`)
     .then(res => {
       console.log(res.data)
       this.setState({
@@ -39,22 +48,15 @@ class App extends Component {
 
   handleSubmit = (e) => {
     e.preventDefault()
-    alert(`you submitted ${this.state.city}`)
+    this.fetchingWeater()
+    // alert(`you submitted ${this.state.city}`)
   }
 
-
-  render(){
-  let displayData = this.state.weatherData.map((el, id) => {
-      // console.log(el.temperature)
-      if(!this.state.weatherData){
-        return (
-          <div>
-            <p>Loading data...</p>
-          </div>
-        )
-      } else {
-        return (
-          <div key={id} className={el.is_day === 'yes' ? 'day' : 'night'}>
+  displayData = data => 
+  data.map((el, id) => {
+    // console.log(el.temperature)
+      return (
+        <div key={id} className={el.is_day === 'yes' ? 'day' : 'night'}>
             <ul>
               <li>{el.temperature} F</li>
               <li>{el.feelslike}</li>
@@ -64,27 +66,41 @@ class App extends Component {
             </ul>
           </div>
         )
-      }
-    })
+  })
+  
+  
+displayData2 = (data) => 
+  data.map((el,id) => {
+  return (
+    <div key={id}>
+      <h1>{el.name}, {el.region}</h1>
+    </div>
+  )
+})
 
-    let displayData2 = this.state.weatherData2.map((el,id) => {
-      return (
-        <div key={id}>
-          <h1>{el.name}, {el.region}</h1>
+  render(){
+    const {weatherData, weatherData2, data} = this.state
+
+    if(data.weatherData === 0 && weatherData2.length === 0){
+      return(
+        <div className='container'>
+          {this.displayData2(weatherData2)}
+          {this.displayData(weatherData)}
         </div>
       )
-    })
 
-    return(
-      <div className='container'>
-        <SearchForm
-          handleChange={this.handleChange}
-          handleSubmit={this.handleSubmit}
-        />
-        {displayData2}
-        {displayData}
+    } else {
+      return (        
+       <div>
+          NO data
+          <SearchForm
+            handleChange={this.handleChange}
+            handleSubmit={this.handleSubmit}
+            />
       </div>
-    )
+      )
+    }
+
   }
 }
 

@@ -10,6 +10,11 @@ function SearchForm ({handleChange, handleSubmit}) {
                     name='city'
                     onChange={handleChange}
                 />
+                <input
+                    placeholder='Enter State'
+                    name='st'
+                    onChange={handleChange}
+                />
                 <input type='submit' value='Submit'/>
             </form>
         </div>
